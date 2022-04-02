@@ -1,2 +1,4 @@
-aaaaaaaaa bb cc
- qq    
+ RESW 1
+ RESB 5
+PQR WORD 100
+QWE BYTE c'abc'

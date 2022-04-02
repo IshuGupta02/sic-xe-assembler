@@ -1,3 +1,5 @@
+package assignment;
+
 import java.io.*;
 import java.util.*;
 
@@ -19,7 +21,7 @@ public class input{
         myReader = new Scanner(input_file);
         for(int i=0; i<lines; i++){
             String data = myReader.nextLine();
-            System.out.println(data);
+            // System.out.println(data);
 
             Scanner sc= new Scanner(data);
             if(!(data.charAt(0)==' ')){
@@ -37,14 +39,14 @@ public class input{
                 }
             }
 
-            System.out.println(parsed[i][0]);
-            System.out.println(parsed[i][1]);
-            System.out.println(parsed[i][2]);
+            // System.out.println(parsed[i][0]);
+            // System.out.println(parsed[i][1]);
+            // System.out.println(parsed[i][2]);
             
         }
         myReader.close();
 
-        System.out.println(Arrays.toString(parsed));
+        // System.out.println(Arrays.toString(parsed));
 
         return parsed;
     }
