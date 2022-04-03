@@ -59,6 +59,8 @@ public class assembler{
 
         
         for(int i=0; i<lines; i++){
+
+            // System.out.println(i+" : "+Arrays.toString(parsed_input[i]));
             
             pass1[i][3]= curr_loc;
             pass1[i][4]= Integer.toString(curr_block);
@@ -82,6 +84,8 @@ public class assembler{
             }
             else if(parsed_input[i][1].equals("EQU")){
 
+                // System.out.println("EQU found at "+i);
+
                 if(parsed_input[i][0]!=null){
                     if(parsed_input[i][2].equals("*")){
                         
@@ -90,31 +94,36 @@ public class assembler{
                     }
                     else{
                         String operand= parsed_input[i][2];
+                        // System.out.println(operand);
                         String curr_operand="";
 
                         ArrayList<String> expression= new ArrayList<>();
 
-                        for(int i=0; i<operand.length; i++){
-                            if(operand.charAt(i)=='+' || 
-                            operand.charAt(i)=='-' ||
-                            operand.charAt(i)=='*' ||
-                            operand.charAt(i)=='/'){
+                        for(int p=0; p<operand.length(); p++){
+                            if(operand.charAt(p)=='+' || 
+                            operand.charAt(p)=='-' ||
+                            operand.charAt(p)=='*' ||
+                            operand.charAt(p)=='/'){
 
                                 expression.add(curr_operand);
                                 curr_operand="";
-                                expression.add(Character.toString(operand.charAt(i)));
+                                expression.add(Character.toString(operand.charAt(p)));
 
                             }
                             else{
-                                curr_operand= curr_operand+operand.charAt(i);
+                                curr_operand= curr_operand+operand.charAt(p);
                             }
                             
                         }
 
                         expression.add(curr_operand);
-                        String[] expression_arr= expression.toArray();
+                        String[] expression_arr= new String[expression.size()];
 
-                        if(expression_arr.length()%2==0){
+                        expression_arr= expression.toArray(expression_arr);
+
+                        // System.out.println(Arrays.toString(expression_arr));
+
+                        if(expression_arr.length%2==0){
                             pass1[i][5]= "Not a valid expression";
                             continue;
                         }
@@ -126,32 +135,113 @@ public class assembler{
                             // expression_arr[i]- should be either a constant like 1 or present in symbol table
 
                             try{
-                                if(symtab.constainsKey(expression_arr[i])){
-                                    
+                                if(symtab.containsKey(expression_arr[k])){
+                                                                        
                                 }
                                 else{
-                                    Integer.parseInt(expression_arr[i]);
+                                    Integer.parseInt(expression_arr[k]);
                                 }
                             }
-                            catch{
-                                pass1[i][5]= expression_arr[i]+" has not been defined yet";
+                            catch(Exception e){
+                                pass1[i][5]= expression_arr[k]+" has not been defined yet";
                                 break;
                                                                 
                             }
                         }
 
-                        if(k!=expression_arr.length){
+                        // System.out.println("before declared relative");
+
+                        if(k!=expression_arr.length+1){
                             continue;
                         }
 
-                        for(k=0; k<expression_arr.length; k+=2){
+                        int relativePlus=0;
+                        int relativeMinus=0;
+
+                        // System.out.println("declared relative");
+
+                        try{
+                            Integer.parseInt(expression_arr[0]);
+                        }
+                        catch(Exception e){
+                            relativePlus++;
+                        }
+
+                        k=1;
+
+                        // System.out.println("Before loop: relativePlus: "+ relativePlus);
+                        // System.out.println("relativeMinus: "+ relativeMinus);
+
+                        for(; k<expression_arr.length; k+=2){
+
                             //check each operator
                             //add first operand in relative +, if it is relative
                             //if the operator is + or -, change the count of relative+ and relative-or absolute, whatever the operand is
                             //if the operator is * or /, check if the operands before and after the operator are absolute, if not, error, if yes, do nothing
-                            
+
+                            String operand1= expression_arr[k-1];
+                            String operand2= expression_arr[k+1];
+
+                            if(expression_arr[k].equals("+")){
+
+                                try{
+                                    Integer.parseInt(operand2); 
+                                    // System.out.println("integer");                                   
+                                }
+                                catch(Exception e){
+                                    relativePlus++;                                                                        
+                                }
+
+
+                            }
+                            else if(expression_arr[k].equals("-")){
+
+                                try{
+                                    Integer.parseInt(operand2);                                    
+                                }
+                                catch(Exception e){
+                                    relativeMinus++;                                                                        
+                                }
+
+                            }
+                            else if(expression_arr[k].equals("*")){
+                                try{
+                                    Integer.parseInt(operand1);
+                                    Integer.parseInt(operand2);
+                                }
+                                catch(Exception e){
+                                    pass1[i][5]= "relative expression cannot be multiplied";
+                                    break;
+                                }
+
+                            }
+                            else if(expression_arr[k].equals("/")){
+                                try{
+                                    Integer.parseInt(operand1);
+                                    Integer.parseInt(operand2);
+                                }
+                                catch(Exception e){
+                                    pass1[i][5]= "relative expression cannot be divided";
+                                    break;
+                                }
+                                
+                            }        
                                                                                     
-                        }                        
+                        }
+
+
+                        if(k != expression_arr.length) continue;
+
+                        // System.out.println(Arrays.toString(expression_arr));
+                        // System.out.println("relativePlus: "+ relativePlus);
+                        // System.out.println("relativeMinus: "+ relativeMinus);
+
+                        if(!(relativePlus-relativeMinus == 1 || relativePlus-relativeMinus == 0)){
+                            pass1[i][5]= "Invalid expression";
+                            continue;
+                        }
+
+                                               
                         
                     }
 
@@ -258,8 +348,6 @@ public class assembler{
                 if(type != 'c' && type!='x' && type!='b'){
                     
                 }
-
-
                 
                 littab.put(parsed_input[i][2].substring(1), new literalDetails(curr_loc, curr_block));
             }
@@ -271,7 +359,7 @@ public class assembler{
         
         System.out.println("pass1: ");
         for(int i=0; i<pass1.length; i++){
-            for(int j=0; j<5; j++){
+            for(int j=0; j<6; j++){
                 System.out.print(pass1[i][j]+" ");
             }
             System.out.println();
