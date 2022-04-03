@@ -4,8 +4,8 @@ import java.util.*;
 
 public class literalDetails{
     
-    String locctr;
-    int block_number;
+    public String locctr;
+    public int block_number;
 
     public literalDetails(String locctr, int block_number){
         this.locctr= locctr;

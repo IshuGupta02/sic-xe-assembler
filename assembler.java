@@ -5,6 +5,7 @@ import assignment.optable;
 import assignment.programBlockDetails;
 import assignment.symbolDetails;
 import assignment.literalDetails;
+import assignment.ltorg_details;
 import assignment.expressionEvaluate;
 
 import java.io.File;  // Import the File class
@@ -58,8 +59,9 @@ public class assembler{
         //final data structure generared after pass1
         String[][] pass1= new String[lines][6];
 
-        // =x'05', ltorg_locctr, ltorg_block, locctr   
-        ArrayList<ArrayList<String>> ltorgs= new ArrayList<>();
+        // ltorg_locctr, x'05', ltorg_block, locctr 
+        // ArrayList<ArrayList<String>> ltorgs= new ArrayList<>();
+        HashMap<String, ltorg_details> ltorgs= new HashMap<>();
 
         
         for(int i=0; i<lines; i++){
@@ -283,6 +285,35 @@ public class assembler{
             }
             else if(parsed_input[i][1].equals("LTORG")){
 
+                String ltorg_locctr= curr_loc;
+
+                for(Map.Entry<String, literalDetails> entry:littab.entrySet()){                    
+                    String litValue= entry.getKey();
+                    literalDetails details= entry.getValue();  
+
+                    if(details.locctr.equals("*")){
+
+                        ltorgs.put(ltorg_locctr, new ltorg_details(curr_loc, curr_block, litValue));
+
+                        littab.put(litValue, new literalDetails(curr_loc,curr_block));
+
+
+                        int length= 0;
+
+                        if(litValue.charAt(0)=='x'){
+                            length= (int)(Math.ceil(litValue.length()-3/2));
+                        }
+                        else if(litValue.charAt(0)=='c'){
+                            length= litValue.length()-3;
+                        }
+                        else if(litValue.charAt(0)=='b'){
+                            length= (int)(Math.ceil(litValue.length()-3/8));
+                        }
+                        
+                        curr_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+length);
+
+                    }                  
+                }
                 
             }
             else if(parsed_input[i][1].equals("USE")){
@@ -424,6 +455,12 @@ public class assembler{
 
         System.out.println("Symbol Table: ");
         symtab.entrySet().forEach(entry -> {
+            System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        });
+
+
+        System.out.println("ltorgs: ");
+        ltorgs.entrySet().forEach(entry -> {
             System.out.println(entry.getKey() + " " + entry.getValue().toString());
         });
 
