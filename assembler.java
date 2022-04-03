@@ -5,6 +5,7 @@ import assignment.optable;
 import assignment.programBlockDetails;
 import assignment.symbolDetails;
 import assignment.literalDetails;
+import assignment.expressionEvaluate;
 
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
@@ -56,6 +57,9 @@ public class assembler{
 
         //final data structure generared after pass1
         String[][] pass1= new String[lines][6];
+
+        // =x'05', ltorg_locctr, ltorg_block, locctr   
+        ArrayList<ArrayList<String>> ltorgs= new ArrayList<>();
 
         
         for(int i=0; i<lines; i++){
@@ -160,11 +164,14 @@ public class assembler{
 
                         // System.out.println("declared relative");
 
+                        int block=0;
+
                         try{
                             Integer.parseInt(expression_arr[0]);
                         }
                         catch(Exception e){
                             relativePlus++;
+                            block= symtab.get(expression_arr[0]).block_number;
                         }
 
                         k=1;
@@ -189,7 +196,10 @@ public class assembler{
                                     // System.out.println("integer");                                   
                                 }
                                 catch(Exception e){
-                                    relativePlus++;                                                                        
+                                    relativePlus++;   
+
+                                    block= symtab.get(operand2).block_number;  
+
                                 }
 
 
@@ -200,7 +210,8 @@ public class assembler{
                                     Integer.parseInt(operand2);                                    
                                 }
                                 catch(Exception e){
-                                    relativeMinus++;                                                                        
+                                    relativeMinus++;   
+                                    block= symtab.get(operand2).block_number;                                                                     
                                 }
 
                             }
@@ -241,8 +252,21 @@ public class assembler{
                             continue;
                         }
 
-                                               
-                        
+                        // System.out.println("here0");
+
+                        int ans= expressionEvaluate.evaluateExp(expression_arr, symtab);
+
+                        if(relativePlus-relativeMinus == 0){
+                            // System.out.println("here1");
+                            symtab.put(parsed_input[i][0], new symbolDetails(Integer.toHexString(ans), false, curr_block));
+                        }
+                        else if(relativePlus-relativeMinus == 1){
+                            // System.out.println("here2");
+                            symtab.put(parsed_input[i][0], new symbolDetails(Integer.toHexString(ans), true, block));
+                        }
+
+                        // System.out.println("here3");
+   
                     }
 
                 }
@@ -258,14 +282,43 @@ public class assembler{
                 
             }
             else if(parsed_input[i][1].equals("LTORG")){
+
                 
             }
             else if(parsed_input[i][1].equals("USE")){
                 if(parsed_input[i][2]!=null){
-                
+                    try{
+
+                        curr_block = programBlocks.program_blocks.get(parsed_input[i][2]);
+                        curr_loc = programBlocks.block_details.get(curr_block);
+
+                    }
+                    catch(Exception e){
+
+                        int max=0;
+
+                        for(Map.Entry<String, Integer> entry:programBlocks.program_blocks.entrySet()){
+
+                            max= (int) Math.max(max, entry.getValue());
+                            
+                        }
+
+                        // programBlocks.program_blocks.entrySet().forEach(entry -> {
+                        //     max= (int) Math.max(max, entry.getValue());
+                        // });
+
+                        programBlocks.program_blocks.put(parsed_input[i][2], max+1);
+                        programBlocks.block_details.put(max+1, "0"); 
+
+                        curr_block = max+1;
+                        curr_loc = "0";
+
+                    }
+                                                        
                 }
                 else{
-
+                    curr_block = programBlocks.program_blocks.get("DEFAULT");
+                    curr_loc = programBlocks.block_details.get(curr_block);
                 }
                 
             }
@@ -340,7 +393,7 @@ public class assembler{
 
             
 
-            if(parsed_input[i][2]!=null & parsed_input[i][2].charAt(0)=='='){
+            if(parsed_input[i][2]!=null && parsed_input[i][2].charAt(0)=='='){
                 
                 char type= parsed_input[i][2].charAt(1);
 
@@ -349,13 +402,11 @@ public class assembler{
                     
                 }
                 
-                littab.put(parsed_input[i][2].substring(1), new literalDetails(curr_loc, curr_block));
+                littab.put(parsed_input[i][2].substring(1), new literalDetails("*",0));
             }
 
 
         }
-
-
         
         System.out.println("pass1: ");
         for(int i=0; i<pass1.length; i++){
@@ -367,6 +418,7 @@ public class assembler{
 
         System.out.println("literal Table: ");
         littab.entrySet().forEach(entry -> {
+            // System.out.print()
             System.out.println(entry.getKey() + " " + entry.getValue().toString());
         });
 
@@ -374,8 +426,6 @@ public class assembler{
         symtab.entrySet().forEach(entry -> {
             System.out.println(entry.getKey() + " " + entry.getValue().toString());
         });
-
-
 
     }
 }

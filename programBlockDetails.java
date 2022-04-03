@@ -5,10 +5,10 @@ import java.util.*;
 public class programBlockDetails{
     
     //block name, Block number
-    HashMap<String, Integer> program_blocks;
+    public HashMap<String, Integer> program_blocks;
 
     //Block number, locctr
-    HashMap<Integer, String> block_details;
+    public HashMap<Integer, String> block_details;
 
     public programBlockDetails(){
 

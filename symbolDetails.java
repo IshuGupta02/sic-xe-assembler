@@ -4,9 +4,9 @@ import java.util.*;
 
 public class symbolDetails{
 
-    boolean isRelative;
-    String value;
-    int block_number;
+    public boolean isRelative;
+    public String value;
+    public int block_number;
 
     public symbolDetails(String val, boolean isRel, int block){
         isRelative= isRel;
