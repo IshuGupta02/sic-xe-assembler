@@ -13,18 +13,18 @@ public class optable{
 
         optableMap.put("ADD", new opcodeInfo("18", 3));
         optableMap.put("ADDF", new opcodeInfo("58", 3));
-        optableMap.put("ADDR", new opcodeInfo("90", 3));
+        optableMap.put("ADDR", new opcodeInfo("90", 2));
         optableMap.put("AND", new opcodeInfo("40", 3));
-        optableMap.put("CLEAR", new opcodeInfo("B4", 3));
+        optableMap.put("CLEAR", new opcodeInfo("B4", 2));
         optableMap.put("COMP", new opcodeInfo("28", 3));
         optableMap.put("COMPF", new opcodeInfo("88", 3));
-        optableMap.put("COMPR", new opcodeInfo("A0", 3));
+        optableMap.put("COMPR", new opcodeInfo("A0", 2));
         optableMap.put("DIV", new opcodeInfo("24", 3));
         optableMap.put("DIVF",new opcodeInfo("64", 3));
-        optableMap.put("DIVR", new opcodeInfo("9C", 3));
-        optableMap.put("FIX", new opcodeInfo("C4", 3));
-        optableMap.put("FLOAT", new opcodeInfo("C0", 3));
-        optableMap.put("HLO", new opcodeInfo("F4", 3));
+        optableMap.put("DIVR", new opcodeInfo("9C", 2));
+        optableMap.put("FIX", new opcodeInfo("C4", 1));
+        optableMap.put("FLOAT", new opcodeInfo("C0", 1));
+        optableMap.put("HLO", new opcodeInfo("F4", 1));
         optableMap.put("J", new opcodeInfo("3C", 3) );
         optableMap.put("JEQ", new opcodeInfo("30", 3));
         optableMap.put("JGT", new opcodeInfo("34", 3));
@@ -41,15 +41,15 @@ public class optable{
         optableMap.put("LPS", new opcodeInfo("D0", 3));
         optableMap.put("MUL", new opcodeInfo("20", 3));
         optableMap.put("MULF", new opcodeInfo("60", 3));
-        optableMap.put("MULR", new opcodeInfo("98", 3));
-        optableMap.put("NORM", new opcodeInfo("C8", 3));
+        optableMap.put("MULR", new opcodeInfo("98", 2));
+        optableMap.put("NORM", new opcodeInfo("C8", 1));
         optableMap.put("OR", new opcodeInfo("44", 3));
         optableMap.put("RD",  new opcodeInfo("D8", 3));
-        optableMap.put("RMO", new opcodeInfo("AC", 3));
+        optableMap.put("RMO", new opcodeInfo("AC", 2));
         optableMap.put("RSUB", new opcodeInfo("4C", 3));
-        optableMap.put("SHIFT", new opcodeInfo("A4", 3));
-        optableMap.put("SHIFTR", new opcodeInfo("A8", 3));
-        optableMap.put("SIO", new opcodeInfo("F0", 3));
+        optableMap.put("SHIFT", new opcodeInfo("A4", 2));
+        optableMap.put("SHIFTR", new opcodeInfo("A8", 2));
+        optableMap.put("SIO", new opcodeInfo("F0", 1));
         optableMap.put("SSK", new opcodeInfo("EC", 3));
         optableMap.put("STA", new opcodeInfo("0C", 3));
         optableMap.put("STB", new opcodeInfo("78", 3));
@@ -63,12 +63,12 @@ public class optable{
         optableMap.put("STX", new opcodeInfo("10", 3));
         optableMap.put("SUB",new opcodeInfo("1C", 3));
         optableMap.put("SUBF", new opcodeInfo("5C", 3));
-        optableMap.put("SUBR", new opcodeInfo("94", 3) );
-        optableMap.put("SVC", new opcodeInfo("B0", 3));
+        optableMap.put("SUBR", new opcodeInfo("94", 2) );
+        optableMap.put("SVC", new opcodeInfo("B0", 2));
         optableMap.put("TD", new opcodeInfo("E0", 3));
-        optableMap.put("TIO", new opcodeInfo("F8", 3));
+        optableMap.put("TIO", new opcodeInfo("F8", 1));
         optableMap.put("TIX", new opcodeInfo("2C", 3));
-        optableMap.put("TIXR", new opcodeInfo("B8", 3));
+        optableMap.put("TIXR", new opcodeInfo("B8", 2));
         optableMap.put("WD", new opcodeInfo("DC", 3));
     }
 }

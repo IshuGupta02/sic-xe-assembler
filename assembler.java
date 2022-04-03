@@ -8,6 +8,7 @@ import assignment.literalDetails;
 import assignment.ltorg_details;
 import assignment.expressionEvaluate;
 import assignment.blockDetails;
+import assignment.pass2;
 
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
@@ -21,7 +22,7 @@ public class assembler{
         String[][] parsed_input;
 
         try {
-            File myObj = new File("code.txt");
+            File myObj = new File("code1.txt");
             parsed_input= input.parseData(myObj);
         } 
         catch (FileNotFoundException e) {
@@ -643,8 +644,13 @@ public class assembler{
             System.out.println();
         }
  
-        //update optable
         //check that locctr of two different blocks can be same and will be overridden in ltorgs
+
+
+
+
+        pass2.generateCode(pass1_final);
+
 
     }
 }
