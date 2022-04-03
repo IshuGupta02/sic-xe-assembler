@@ -7,6 +7,7 @@ import assignment.symbolDetails;
 import assignment.literalDetails;
 import assignment.ltorg_details;
 import assignment.expressionEvaluate;
+import assignment.blockDetails;
 
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
@@ -61,10 +62,12 @@ public class assembler{
 
         // ltorg_locctr, x'05', ltorg_block, locctr 
         // ArrayList<ArrayList<String>> ltorgs= new ArrayList<>();
-        HashMap<String, ltorg_details> ltorgs= new HashMap<>();
+        HashMap<String, ArrayList<ltorg_details>> ltorgs= new HashMap<>();
 
         
         for(int i=0; i<lines; i++){
+
+            // System.out.println("curr_loc: "+curr_loc+" curr_block: "+curr_block);
 
             // System.out.println(i+" : "+Arrays.toString(parsed_input[i]));
             
@@ -172,7 +175,10 @@ public class assembler{
                             Integer.parseInt(expression_arr[0]);
                         }
                         catch(Exception e){
-                            relativePlus++;
+                            if(symtab.get(expression_arr[0]).isRelative){
+                                relativePlus++;
+                            }
+                            
                             block= symtab.get(expression_arr[0]).block_number;
                         }
 
@@ -191,6 +197,8 @@ public class assembler{
                             String operand1= expression_arr[k-1];
                             String operand2= expression_arr[k+1];
 
+                            // System.out.println(operand1+" "+operand2);
+
                             if(expression_arr[k].equals("+")){
 
                                 try{
@@ -198,7 +206,12 @@ public class assembler{
                                     // System.out.println("integer");                                   
                                 }
                                 catch(Exception e){
-                                    relativePlus++;   
+
+                                    if(symtab.get(operand2).isRelative){
+                                        relativePlus++;
+                                    }
+                                    
+                                    // relativePlus++;   
 
                                     block= symtab.get(operand2).block_number;  
 
@@ -212,7 +225,10 @@ public class assembler{
                                     Integer.parseInt(operand2);                                    
                                 }
                                 catch(Exception e){
-                                    relativeMinus++;   
+                                    if(symtab.get(operand2).isRelative){
+                                        relativeMinus++;   
+                                    }
+                                    
                                     block= symtab.get(operand2).block_number;                                                                     
                                 }
 
@@ -220,22 +236,52 @@ public class assembler{
                             else if(expression_arr[k].equals("*")){
                                 try{
                                     Integer.parseInt(operand1);
+                                }
+                                catch(Exception e){
+
+                                    if(symtab.get(operand1).isRelative){
+                                        pass1[i][5]= "relative expression cannot be multiplied";
+                                        break;  
+                                    }
+
+                                }
+
+                                try{
                                     Integer.parseInt(operand2);
                                 }
                                 catch(Exception e){
-                                    pass1[i][5]= "relative expression cannot be multiplied";
-                                    break;
+
+                                    if(symtab.get(operand2).isRelative){
+                                        pass1[i][5]= "relative expression cannot be multiplied";
+                                        break;  
+                                    }
+
                                 }
 
                             }
                             else if(expression_arr[k].equals("/")){
                                 try{
                                     Integer.parseInt(operand1);
+                                }
+                                catch(Exception e){
+
+                                    if(symtab.get(operand1).isRelative){
+                                        pass1[i][5]= "relative expression cannot be divided";
+                                        break;  
+                                    }
+
+                                }
+
+                                try{
                                     Integer.parseInt(operand2);
                                 }
                                 catch(Exception e){
-                                    pass1[i][5]= "relative expression cannot be divided";
-                                    break;
+
+                                    if(symtab.get(operand2).isRelative){
+                                        pass1[i][5]= "relative expression cannot be divided";
+                                        break;  
+                                    }
+
                                 }
                                 
                             }        
@@ -287,13 +333,17 @@ public class assembler{
 
                 String ltorg_locctr= curr_loc;
 
+                ArrayList<ltorg_details> arr= new ArrayList<>();
+
                 for(Map.Entry<String, literalDetails> entry:littab.entrySet()){                    
                     String litValue= entry.getKey();
-                    literalDetails details= entry.getValue();  
+                    literalDetails details= entry.getValue();
 
                     if(details.locctr.equals("*")){
 
-                        ltorgs.put(ltorg_locctr, new ltorg_details(curr_loc, curr_block, litValue));
+                        arr.add(new ltorg_details(curr_loc, curr_block, litValue));
+
+                        // ltorgs.put(ltorg_locctr, new ltorg_details(curr_loc, curr_block, litValue));
 
                         littab.put(litValue, new literalDetails(curr_loc,curr_block));
 
@@ -301,18 +351,26 @@ public class assembler{
                         int length= 0;
 
                         if(litValue.charAt(0)=='x'){
-                            length= (int)(Math.ceil(litValue.length()-3/2));
+                            // System.out.println("x found!");
+                            // System.out.println(litValue);
+                            // System.out.println(litValue.length());
+                            length= (int)(Math.ceil((litValue.length()-3)/2));
                         }
                         else if(litValue.charAt(0)=='c'){
                             length= litValue.length()-3;
                         }
                         else if(litValue.charAt(0)=='b'){
-                            length= (int)(Math.ceil(litValue.length()-3/8));
+                            length= (int)(Math.ceil((litValue.length()-3)/8));
                         }
+
+                        // System.out.println("length due to ltorg: "+length);
                         
                         curr_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+length);
 
-                    }                  
+                    }
+
+                    ltorgs.put(ltorg_locctr, arr);
+
                 }
                 
             }
@@ -380,6 +438,9 @@ public class assembler{
                     pass1[i][5]= "invalid operand for assembler directive BYTE";
                     continue;
                 }
+
+                String new_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+length);
+                curr_loc= new_loc;
                 
 
             }
@@ -414,6 +475,31 @@ public class assembler{
             //a valid opcode
             else if (optable.optableMap.containsKey(parsed_input[i][1])){
 
+                if(parsed_input[i][1].charAt(0)=='+'){
+                    if(optable.optableMap.get(parsed_input[i][1]).format==3){
+                        // curr_loc+=4;
+
+                        curr_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+4);
+
+                    }
+                    else{
+                        pass1[i][5]="Extended format is not possible for this instruction";
+                        continue;
+                    }
+                }
+                else{
+                    if(optable.optableMap.get(parsed_input[i][1]).format==1){
+                        curr_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+1);
+                    }
+                    else if(optable.optableMap.get(parsed_input[i][1]).format==2){
+                        curr_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+2);
+                    }
+                    else if(optable.optableMap.get(parsed_input[i][1]).format==3){
+                        curr_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+3);
+                    }
+
+                }
+
             }
 
             //not a valid instruction
@@ -422,8 +508,6 @@ public class assembler{
                 continue;
             }
 
-            
-
             if(parsed_input[i][2]!=null && parsed_input[i][2].charAt(0)=='='){
                 
                 char type= parsed_input[i][2].charAt(1);
@@ -431,13 +515,23 @@ public class assembler{
                 //c,x,b,
                 if(type != 'c' && type!='x' && type!='b'){
                     
+                    
                 }
                 
                 littab.put(parsed_input[i][2].substring(1), new literalDetails("*",0));
             }
 
+            
+
+
+            programBlocks.block_details.put(curr_block, curr_loc);
+
+            // System.out.println("After: curr_loc: "+curr_loc+" curr_block: "+curr_block);
+
 
         }
+
+        System.out.println('\n');
         
         System.out.println("pass1: ");
         for(int i=0; i<pass1.length; i++){
@@ -447,22 +541,110 @@ public class assembler{
             System.out.println();
         }
 
+        System.out.println('\n');
+
         System.out.println("literal Table: ");
         littab.entrySet().forEach(entry -> {
             // System.out.print()
             System.out.println(entry.getKey() + " " + entry.getValue().toString());
         });
 
+        System.out.println('\n');
+
         System.out.println("Symbol Table: ");
         symtab.entrySet().forEach(entry -> {
             System.out.println(entry.getKey() + " " + entry.getValue().toString());
         });
+
+        System.out.println('\n');
 
 
         System.out.println("ltorgs: ");
         ltorgs.entrySet().forEach(entry -> {
             System.out.println(entry.getKey() + " " + entry.getValue().toString());
         });
+
+        System.out.println('\n');
+
+        HashMap<Integer, blockDetails> blocktab= new HashMap<>();
+
+        String loc= "0";
+
+        int p=0;
+        while(true){
+            if(programBlocks.block_details.containsKey(p)){
+
+                blocktab.put(p, new blockDetails(loc,programBlocks.block_details.get(p)));
+
+                loc= Integer.toHexString(Integer.parseInt(loc, 16)+Integer.parseInt(programBlocks.block_details.get(p),16));
+            
+            }
+            else{
+
+                break;
+
+            }
+
+            p++;
+        }
+
+        System.out.println("blocktab: ");
+        blocktab.entrySet().forEach(entry -> {
+            System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        });
+
+        System.out.println('\n');
+
+        int literal_size=0;
+
+        for(Map.Entry<String, ArrayList<ltorg_details>> entry:ltorgs.entrySet()){
+            literal_size += entry.getValue().size();
+        }
+
+        String[][] pass1_final= new String[literal_size+pass1.length][6];
+
+        int new_index=0;
+
+        for(int k=0; k<pass1.length; k++){
+
+            pass1_final[new_index][0]=pass1[k][0];
+            pass1_final[new_index][1]=pass1[k][1];
+            pass1_final[new_index][2]=pass1[k][2];
+            pass1_final[new_index][3]=pass1[k][3];
+            pass1_final[new_index][4]=pass1[k][4];
+            pass1_final[new_index][5]=pass1[k][5];
+
+            new_index++;
+
+            if(pass1[k][1].equals("LTORG")){
+
+                String locctr_ltorg= pass1[k][3];
+                int locctr_block= Integer.parseInt(pass1[k][4]);
+
+                ArrayList<ltorg_details> list_literals = ltorgs.get(locctr_ltorg);
+
+                for(int r=0; r<list_literals.size(); r++){
+                    pass1_final[new_index][0]= "*";
+                    pass1_final[new_index][1]= list_literals.get(r).literal;
+                    pass1_final[new_index][3]= list_literals.get(r).locctr;
+                    pass1_final[new_index][4]= list_literals.get(r).ltorg_block+ "";
+                    new_index++;
+                }
+
+            }         
+            
+        }
+
+        System.out.println("pass1_final: ");
+        for(int i=0; i<pass1_final.length; i++){
+            for(int j=0; j<6; j++){
+                System.out.print(pass1_final[i][j]+" ");
+            }
+            System.out.println();
+        }
+ 
+        //update optable
+        //check that locctr of two different blocks can be same and will be overridden in ltorgs
 
     }
 }

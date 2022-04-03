@@ -73,16 +73,3 @@ public class optable{
     }
 }
 
-
-class opcodeInfo{
-    String opcode;
-    int format;
-
-    opcodeInfo(String opcode, int format){
-        this.opcode = opcode;
-        this.format= format;
-
-    }
-
-    //format- 1,2,3- 1,2,3/4
-}
