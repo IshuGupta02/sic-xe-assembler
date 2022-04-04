@@ -9,6 +9,7 @@ import assignment.ltorg_details;
 import assignment.expressionEvaluate;
 import assignment.blockDetails;
 import assignment.hexConversion;
+import assignment.objectProgram;
 
 import java.io.File;  // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
@@ -459,7 +460,7 @@ public class pass2{
         // System.out.println(pass2[10][6]);
         // System.out.println(pass2[11][6]);
 
-
+        objectProgram.generateObjectProgram(blocktab, pass2);
         
     }
 
