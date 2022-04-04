@@ -276,6 +276,15 @@ public class pass2{
                             if((op1- curr_loc-3) <=2047 &&  (op1- curr_loc-3) >= -2048){
                                 third_hex+=2;
                                 value= Integer.toHexString(op1- curr_loc-3);
+
+                                while(value.length()<3){
+                                    value= "f"+value;
+                                }
+
+                                while(value.length()>3){
+                                    value= value.substring(1);
+                                }
+
                             }
                             else if(baseEnabled && op1-base >=0 && op1-base <= 4095){
                                 third_hex+=4;
