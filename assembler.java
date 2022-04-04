@@ -355,13 +355,13 @@ public class assembler{
                             // System.out.println("x found!");
                             // System.out.println(litValue);
                             // System.out.println(litValue.length());
-                            length= (int)(Math.ceil((litValue.length()-3)/2));
+                            length= (int)(Math.ceil(((double)litValue.length()-3)/2));
                         }
                         else if(litValue.charAt(0)=='c'){
                             length= litValue.length()-3;
                         }
                         else if(litValue.charAt(0)=='b'){
-                            length= (int)(Math.ceil((litValue.length()-3)/8));
+                            length= (int)(Math.ceil(((double)litValue.length()-3)/8));
                         }
 
                         // System.out.println("length due to ltorg: "+length);
@@ -413,9 +413,11 @@ public class assembler{
                 
             }
             else if(parsed_input[i][1].equals("BASE")){
+                //pass2
                 
             }
             else if(parsed_input[i][1].equals("NOBASE")){
+                //pass2
                 
             }
             else if(parsed_input[i][1].equals("BYTE")){
@@ -474,10 +476,10 @@ public class assembler{
             }
 
             //a valid opcode
-            else if (optable.optableMap.containsKey(parsed_input[i][1])){
+            else if (optable.optableMap.containsKey(parsed_input[i][1]) || ( parsed_input[i][1].charAt(0)=='+' && optable.optableMap.containsKey(parsed_input[i][1].substring(1)))){
 
                 if(parsed_input[i][1].charAt(0)=='+'){
-                    if(optable.optableMap.get(parsed_input[i][1]).format==3){
+                    if(optable.optableMap.get(parsed_input[i][1].substring(1)).format==3){
                         // curr_loc+=4;
 
                         curr_loc= Integer.toHexString(Integer.parseInt(curr_loc, 16)+4);
@@ -552,12 +554,7 @@ public class assembler{
 
         System.out.println('\n');
 
-        System.out.println("Symbol Table: ");
-        symtab.entrySet().forEach(entry -> {
-            System.out.println(entry.getKey() + " " + entry.getValue().toString());
-        });
-
-        System.out.println('\n');
+        
 
 
         System.out.println("ltorgs: ");
@@ -645,11 +642,28 @@ public class assembler{
         }
  
         //check that locctr of two different blocks can be same and will be overridden in ltorgs
+        //improve parsed_input
 
 
 
+        // System.out.println("literal Table: ");
+        littab.entrySet().forEach(entry -> {
+            // System.out.print()
+            symtab.put(entry.getKey(), new symbolDetails(entry.getValue().locctr, true,entry.getValue().block_number));
+            // System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        });
 
-        pass2.generateCode(pass1_final);
+        System.out.println('\n');
+
+        System.out.println("Symbol Table: ");
+        symtab.entrySet().forEach(entry -> {
+            System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        });
+
+        System.out.println('\n');
+
+
+        pass2.generateCode(pass1_final, symtab, blocktab);
 
 
     }
