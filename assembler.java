@@ -22,7 +22,7 @@ public class assembler{
         String[][] parsed_input;
 
         try {
-            File myObj = new File("code1.txt");
+            File myObj = new File("input.txt");
             parsed_input= input.parseData(myObj);
         } 
         catch (FileNotFoundException e) {

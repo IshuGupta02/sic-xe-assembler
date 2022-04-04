@@ -157,12 +157,47 @@ public class pass2{
                 }   
                 else{
 
-                    //format3
+                    String inst= pass2[i][1];
+
+                    int opcode_int= Integer.parseInt(optable.optableMap.get(inst).opcode,16);
+
+                    String final_opcode="";
+
+                    if(pass2[i][2]==null){
+                        opcode_int+=3;
+                        final_opcode= Integer.toHexString(opcode_int);
+
+                        while(final_opcode.length()<2){
+                            final_opcode="0"+final_opcode;
+                        }
+
+                        pass2[i][6]=final_opcode+"0000";
+                        continue;
+                    }
+
+                    int third_hex=0;
+
+                    String operand= pass2[i][2];
+
+                    // System.out.println(operand);
+
+                    String[] components= operand.split(",");
+
+                    if(components.length==1){
+                        //do nothing
+
+                    }
+                    else if(components.length==2){
+                        third_hex+=8;
+                        operand= components[0];                   
+
+                    }
+
 
                     boolean n=true;
                     boolean i1=true;
 
-                    String operand= pass2[i][2];
+                    
 
                     if(operand.charAt(0)=='#'){
                         n=false;
@@ -174,11 +209,9 @@ public class pass2{
                         operand= operand.substring(1);
                     }
 
-                    String inst= pass2[i][1];
+                    
 
-                    int opcode_int= Integer.parseInt(optable.optableMap.get(inst).opcode,16);
-
-                    String final_opcode="";
+                    final_opcode="";
 
                     if(n){
                         if(i1){
@@ -210,7 +243,7 @@ public class pass2{
                     pass2[i][6] =  final_opcode;
                     
                     String value="";
-                    int third_hex=0;
+                    
                     
                     if(n && i1){
                         //direct
@@ -374,7 +407,7 @@ public class pass2{
             }
             else if(pass2[i][1].equals("BASE")){
                 baseEnabled= true;
-                String operand= pass2[i][1];
+                String operand= pass2[i][2];
                 try{
 
                     int base_value;
