@@ -1,0 +1,17 @@
+label instruction operand location_counter block_number error object_code 
+SUM START 0 0000 0 null null 
+FIRST LDX #0 0000 0 null 050000 
+null LDA #0 3 0 null 010000 
+null +LDB #TABLE2 6 0 null 69101790 
+null BASE TABLE2 a 0 null null 
+LOOP ADD TABLE,X a 0 null 1ba013 
+null ADD TABLE2,X d 0 null 1bc000 
+null TIX COUNT 10 0 null 2f200a 
+null JLT LOOP 13 0 null 3b2ff4 
+null +STA TOTAL 16 0 null 0f102f00 
+null RSUB null 1a 0 null 4f0000 
+COUNT RESW 1 1d 0 null null 
+TABLE RESW 2000 20 0 null null 
+TABLE2 RESW 2000 1790 0 null null 
+TOTAL RESW 1 2f00 0 null null 
+null END FIRST 2f03 0 null null 

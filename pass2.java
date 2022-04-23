@@ -10,9 +10,13 @@ import assignment.expressionEvaluate;
 import assignment.blockDetails;
 import assignment.hexConversion;
 import assignment.objectProgram;
+import java.io.FileWriter;
+import java.io.File;  // Import the File class
+// import java.io.FileNotFoundException;
+import java.io.FileNotFoundException;  // Import this class to handle errors
 
 import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.io.IOException;  // Import this class to handle errors
 // import java.util.Scanner; // Import the Scanner class to read text files
 import java.util.*;
 
@@ -274,24 +278,44 @@ public class pass2{
 
                             int curr_loc= Integer.parseInt(pass2[i][3], 16) + Integer.parseInt(blocktab.get(Integer.parseInt(pass2[i][4])).start_addr, 16);
 
+                            // System.out.println(base);
+                            // System.out.println(op1);
+
+                            // System.out.println(op1);
+                            // System.out.println(curr_loc+3);
+                            
+
                             if((op1- curr_loc-3) <=2047 &&  (op1- curr_loc-3) >= -2048){
                                 third_hex+=2;
                                 value= Integer.toHexString(op1- curr_loc-3);
 
-                                while(value.length()<3){
-                                    value= "f"+value;
+                                if(value.charAt(0)=='f'){
+                                    while(value.length()<3){
+                                        value= "f"+value;
+                                    }
+
                                 }
+                                else{
+                                    while(value.length()<3){
+                                        value= "0"+value;
+                                    }
+
+                                }
+                                
 
                                 while(value.length()>3){
                                     value= value.substring(1);
                                 }
 
                             }
+
                             else if(baseEnabled && op1-base >=0 && op1-base <= 4095){
                                 third_hex+=4;
                                 value= Integer.toHexString(op1-base);
                             }
                             else{
+
+                                
 
                                 pass2[i][7]= "";
                                 if(Integer.toHexString(op1).length()<=3){
@@ -431,8 +455,12 @@ public class pass2{
                         if(symtab.get(operand).isRelative){
                             base_value= base_value + Integer.parseInt(blocktab.get(symtab.get(operand).block_number).start_addr, 16);
                         }
+
+                        
                                                 
                     }
+
+                    base= base_value;
 
                 }
                 catch(Exception e){
@@ -456,6 +484,33 @@ public class pass2{
             System.out.println();
         }
 
+
+
+        try {
+            FileWriter myWriter = new FileWriter("listingFile.txt");
+
+            myWriter.write("label"+" instruction operand "+"location_counter"+" block_number "+"error"+" object_code "+'\n');
+            
+            for(int i=0; i<pass2.length; i++){
+                for(int j=0; j<7; j++){
+                    myWriter.write(pass2[i][j]+" ");
+                }
+                myWriter.write('\n');
+            }
+            // myWriter.write("Files in Java might be tricky, but it is fun enough!");
+            myWriter.close();
+            // System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+
+        // for(int i=0; i<pass2.length; i++){
+        //     for(int j=0; j<8; j++){
+        //         System.out.print(pass2[i][j]+" ");
+        //     }
+        //     System.out.println();
+        // }
 
         // System.out.println(pass2[10][6]);
         // System.out.println(pass2[11][6]);

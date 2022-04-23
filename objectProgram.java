@@ -8,7 +8,7 @@ import assignment.literalDetails;
 import assignment.ltorg_details;
 import assignment.expressionEvaluate;
 import assignment.blockDetails;
-import assignment.pass2;
+// import assignment.pass2;
 
 import java.util.*;
 
@@ -181,7 +181,6 @@ public class objectProgram{
 
             int block_num= entry.getKey(); 
 
-            // System.out.println(block_num);
 
             if(block_num>=maxBlock){
 
@@ -202,9 +201,6 @@ public class objectProgram{
 
         String length_of_prog= Integer.toHexString(Integer.parseInt(maxStartAdd,16)+Integer.parseInt(maxLen, 16));
 
-        // while(start_addr.length()<6){
-        //     start_addr= "0"+start_addr;
-        // }
 
         while(length_of_prog.length()<6){
             length_of_prog= "0"+length_of_prog;

@@ -10,8 +10,13 @@ import assignment.expressionEvaluate;
 import assignment.blockDetails;
 import assignment.pass2;
 
+import java.io.FileWriter;
 import java.io.File;  // Import the File class
+// import java.io.FileNotFoundException;
 import java.io.FileNotFoundException;  // Import this class to handle errors
+
+import java.io.File;  // Import the File class
+import java.io.IOException;    // Import this class to handle errors
 // import java.util.Scanner; // Import the Scanner class to read text files
 import java.util.*;
 
@@ -30,14 +35,14 @@ public class assembler{
             return;
         }
 
-        System.out.println("parsed_input: ");
+        // System.out.println("parsed_input: ");
 
-        for(int i=0; i<parsed_input.length; i++){
-            for(int j=0; j<3; j++){
-                System.out.print(parsed_input[i][j]+" ");
-            }
-            System.out.println();
-        }
+        // for(int i=0; i<parsed_input.length; i++){
+        //     for(int j=0; j<3; j++){
+        //         System.out.print(parsed_input[i][j]+" ");
+        //     }
+        //     System.out.println();
+        // }
 
 
         programBlockDetails programBlocks= new programBlockDetails();
@@ -536,13 +541,13 @@ public class assembler{
 
         System.out.println('\n');
         
-        System.out.println("pass1: ");
-        for(int i=0; i<pass1.length; i++){
-            for(int j=0; j<6; j++){
-                System.out.print(pass1[i][j]+" ");
-            }
-            System.out.println();
-        }
+        // System.out.println("pass1: ");
+        // for(int i=0; i<pass1.length; i++){
+        //     for(int j=0; j<6; j++){
+        //         System.out.print(pass1[i][j]+" ");
+        //     }
+        //     System.out.println();
+        // }
 
         System.out.println('\n');
 
@@ -557,10 +562,10 @@ public class assembler{
         
 
 
-        System.out.println("ltorgs: ");
-        ltorgs.entrySet().forEach(entry -> {
-            System.out.println(entry.getKey() + " " + entry.getValue().toString());
-        });
+        // System.out.println("ltorgs: ");
+        // ltorgs.entrySet().forEach(entry -> {
+        //     System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        // });
 
         System.out.println('\n');
 
@@ -633,6 +638,14 @@ public class assembler{
             
         }
 
+        System.out.println("Symbol Table: ");
+        symtab.entrySet().forEach(entry -> {
+            System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        });
+
+        System.out.println('\n');
+
+
         System.out.println("pass1_final: ");
         for(int i=0; i<pass1_final.length; i++){
             for(int j=0; j<6; j++){
@@ -646,6 +659,37 @@ public class assembler{
 
 
 
+
+        // try {
+        //     FileWriter myWriter = new FileWriter("intermediate.txt");
+
+        //     myWriter.write("symbol table: ");
+
+        //     symtab.entrySet().forEach(entry -> {
+        //         myWriter.write(entry.getKey() + " " + entry.getValue().toString());
+               
+        //     });
+
+        //     System.out.println("blocktab: ");
+        //     blocktab.entrySet().forEach(entry -> {
+        //         myWriter.write(entry.getKey() + " " + entry.getValue().toString());
+        //     });
+
+        //     System.out.println("littab: ");
+        //     littab.entrySet().forEach(entry -> {
+        //         myWriter.write(entry.getKey() + " " + entry.getValue().toString());
+        //     });
+
+           
+        //     myWriter.close();
+            
+        // } catch (IOException e) {
+        //     System.out.println("An error occurred.");
+        //     e.printStackTrace();
+        // }
+
+
+
         // System.out.println("literal Table: ");
         littab.entrySet().forEach(entry -> {
             // System.out.print()
@@ -655,12 +699,19 @@ public class assembler{
 
         System.out.println('\n');
 
-        System.out.println("Symbol Table: ");
-        symtab.entrySet().forEach(entry -> {
-            System.out.println(entry.getKey() + " " + entry.getValue().toString());
-        });
+        // System.out.println("Symbol Table: ");
+        // symtab.entrySet().forEach(entry -> {
+        //     System.out.println(entry.getKey() + " " + entry.getValue().toString());
+        // });
 
-        System.out.println('\n');
+        // System.out.println('\n');
+
+
+
+
+        
+
+
 
 
         pass2.generateCode(pass1_final, symtab, blocktab);
